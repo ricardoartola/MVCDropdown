@@ -1,0 +1,50 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+<div class="form-group row">
+    <label for="DepartmentId" class="col-sm-2 col-form-label">Department:</label>
+    <div class="col-sm-4">
+        <select name="DepartmentId" id="DepartmentId" class="form-control"></select>
+    </div>
+</div>
+<div class="form-group row">
+    <label for="ProgramId" class="col-sm-2 col-form-label">Program:</label>
+    <div class="col-sm-4">
+        <select name="ProgramId" id="ProgramId" class="form-control"></select>
+    </div>
+</div>
+@section scripts{
+    <script>
+        $(document).ready(function () {
+             var ddlDepartments = $("#DepartmentId");
+            $.ajax({
+                cache: false,
+                type: "GET",
+                url: '@Url.Action("GetDepartments", "Home")',
+                success: function (data) {
+                    ddlDepartments.html('');
+                    $.each(data, function (id, option) {
+                        ddlDepartments.append($('<option></option>').val(option.id).html(option.name));
+                    });
+                }
+            });
+        });
+        $("#DepartmentId").change(function () {
+            var selectedItemValue = $(this).val();
+            var ddlPrograms = $("#ProgramId");
+            $.ajax({
+                cache: false,
+                type: "GET",
+                url: '@Url.Action("GetProgramsByDepartmentId", "Home")',
+                data: { "id": selectedItemValue },
+                success: function (data) {
+                    ddlPrograms.html('<option value=0>--All Programs--</option>"');
+                    $.each(data, function (id, option) {
+                        ddlPrograms.append($('<option></option>').val(option.id).html(option.name));
+                    });
+                }
+            });
+        });
+        
+    </script>
+}
